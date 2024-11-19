@@ -1,0 +1,64 @@
+.point-selected {
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+.axis-label {
+    font-size: small;
+}
+
+.axis-label.x {
+    text-align: center;
+}
+
+.axis-label.y {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+.chart-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.chart-wrapper.hidden {
+    display: none;
+}
+
+#property-select {
+    margin: 0.5rem 0 0.5rem 0;
+}
+
+#tooltip {
+    position: absolute;
+    opacity: 0;
+    padding: 0.25rem;
+    background-color: white;
+    border: 2px solid black;
+    font-size: small;
+}
+
+/* 
+    Warning Types 
+    'flash-flood' 'severe-thunderstorm' 'special-marine' 'tornado'
+*/
+
+.tornado-group>polygon {
+    fill: rgba(255, 0, 0, 0.3);
+    stroke-width: 1;
+}
+
+.special-marine-group>polygon {
+    fill: rgba(128, 0, 128, 0.3);
+    stroke-width: 1;
+}
+
+.severe-thunderstorm-group>polygon {
+    fill: rgba(255, 255, 0, 0.3);
+    stroke-width: 1;
+}
+
+.flash-flood-group>polygon {
+    fill: rgba(0, 128, 0, 0.3);
+    stroke-width: 1;
+}
