@@ -12,6 +12,16 @@
     <div id="tooltip"></div>
 
     <h1 class="title">Severe Weather Map</h1>
+
+    <div class="selector-wrapper">
+        <label for="warning-type">Select Warning Type:</label>
+        <select name="warning-type" id="warning-type">
+            <option value="tornado" selected>Tornado</option>
+            <option value="severe-thunderstorm">Severe Thunderstorm</option>
+            <option value="flash-flood">Flood</option>
+            <option value="special-marine">Marine</option>
+        </select>
+    </div>
     
     <div class="chart-wrapper">
         <div id="chart-container"></div>

@@ -4,7 +4,6 @@ import "https://d3js.org/d3.v7.min.js";
 const margin = { top: 40, right: 60, bottom: 40, left: 60 };
 const WIDTH = 1420 - margin.left - margin.right;
 const HEIGHT = 600 - margin.top - margin.bottom;
-const RADIUS = 260;
 
 // - - Attach Callbacks - -
 function attachCallbacks(plot) {
@@ -47,28 +46,17 @@ function attachCallbacks(plot) {
     });
 }
 
-//  - - Chart Generator Functions - -
-async function generatePlot(plotId, outline) {
-    // Reset Plot
-    d3.select(plotId).selectAll("*").remove();
-
-    // Create Plot Container
-    const plot = d3.select(plotId)        
-        .append("svg")
-            .attr("width", WIDTH + margin.left + margin.right)
-            .attr("height", HEIGHT + margin.top + margin.bottom)
-        .append("g")
-            .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
+// - - Generate the Main Map - -
+function drawMap(plot, mapData) {
     // Create Projection and Plot Borders
     const projection = d3.geoAlbersUsa()
-        .fitSize([WIDTH, HEIGHT], outline);
+        .fitSize([WIDTH, HEIGHT], mapData);
     
     const generator = d3.geoPath()
         .projection(projection);
 
     plot.selectAll("path")
-        .data(outline.features)
+        .data(mapData.features)
         .enter()
         .append("path")
         .attr("d", generator)
@@ -76,11 +64,17 @@ async function generatePlot(plotId, outline) {
         .attr('fill', '#cce5df')
         .attr('stroke-width', 0.5);
 
-    // Get Locations
-    const warnings = await projectData(projection);
+    // Return the Projector
+    return projection;
+}
+
+//  - - Chart Generator Functions - -
+function plotWarnings(plot, data) {
+    // Clear any Previously created plot
+    plot.selectAll("g").remove();
 
     // Plot Locations
-    warnings.forEach((warn, i) => {
+    data.forEach((warn, i) => {
         const group = plot.append("g")
             .attr("class", `${warn.WARNINGTYPE}-group`)
             .attr("data-id", `warning-${i}`);
@@ -92,13 +86,15 @@ async function generatePlot(plotId, outline) {
                 .attr("stroke-width", 2);
         });
     });
+
+    // attachCallbacks(plot);
 }
 
-async function projectData(projection) {
+// - - Data Methods - -
+async function parseWarnings(projection) {
     const raw = await d3.csv("data/warn-2001-parsed.csv");
 
     const points = raw
-    .slice(1000, 2000)
     .map(d => {
         const parsedPoly = JSON.parse(d.POLYGON);
 
@@ -117,11 +113,40 @@ async function projectData(projection) {
     return points;
 }
 
+
 //  - - Main Execution - -
 async function main() {
-    const geo_json = await d3.json("data/usa-states.json");
+    // Clear and Rebuild the Entire Plot
+    const plotId = "#chart-container";
+    d3.select(plotId).selectAll("*").remove();
 
-    await generatePlot("#chart-container", geo_json);
+    const plot = d3.select(plotId)        
+        .append("svg")
+            .attr("width", WIDTH + margin.left + margin.right)
+            .attr("height", HEIGHT + margin.top + margin.bottom)
+        .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+        
+    // Draw Map and Fetch Projector
+    const geoPathUSAStates = await d3.json("data/usa-states.json");
+    const projector = drawMap(plot, geoPathUSAStates);
+
+    // Get Warning Data and Plot
+    const warnings = await parseWarnings(projector);
+    plotWarnings(
+        plot,
+        warnings.filter(d => d.WARNINGTYPE === "tornado")
+    );
+
+    // Selection Callbacks
+    document.getElementById("warning-type").onchange = () => {
+        const select = document.getElementById("warning-type");
+        console.log("date range changed", select.value);
+        plotWarnings(
+            plot,
+            warnings.filter(d => d.WARNINGTYPE === select.value)
+        );
+    };
 }
 
 main();
