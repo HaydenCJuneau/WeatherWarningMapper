@@ -49,7 +49,7 @@ df["WARNINGTYPE"] = df["WARNINGTYPE"].apply(parseWarning)
 print(df["WARNINGTYPE"].unique())
 
 df.to_csv(
-    r"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\raw\warn-2001-parsed.csv",
+    r"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\warn-2001-parsed.csv",
     index=False,
     columns=["EXPIREDATE", "ISSUEDATE", "WARNINGTYPE", "POLYGON"]
 )
