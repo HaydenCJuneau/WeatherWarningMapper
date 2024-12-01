@@ -1,13 +1,11 @@
-// import "https://d3js.org/d3.v7.min.js";
-
 // Default States
 let warningType = "tornado";
 let yearSelected = "2001";
 
-// Chart Sizing
+// Chart Sizing (1420x600) is a good alterniative to window size
 const margin = { top: 40, right: 60, bottom: 40, left: 60 };
-const WIDTH = 1420 - margin.left - margin.right;
-const HEIGHT = 600 - margin.top - margin.bottom;
+const WIDTH = (window.innerWidth * .9) - margin.left - margin.right;
+const HEIGHT = (window.innerHeight * .8) - margin.top - margin.bottom;
 
 // - - Setup Options --
 function initYears() {
@@ -62,7 +60,7 @@ function plotWarnings(plot, data, filter) {
     });
 }
 
-function plotBins(plot, data, filter) {
+function plotHex(plot, data, filter) {
     // Clear any Previously created plot
     plot.selectAll("g").remove();
 
@@ -85,7 +83,7 @@ function plotBins(plot, data, filter) {
 
 
     plot.append("g")
-           .attr("class", "hexagon")
+            .attr("class", "hexagon")
         .selectAll("path")
         .data(hexData)
         .enter()
@@ -97,7 +95,7 @@ function plotBins(plot, data, filter) {
 }
 
 // - - Data Methods - -
-async function parseWarnings(projection) {
+async function projectData(projection) {
     const raw = await d3.csv(`data/warn-${yearSelected}-parsed.csv`);
 
     const points = raw
@@ -147,9 +145,9 @@ async function main() {
 
     // Get Warning Data and Plot
     const plt = async () => {
-        const warnings = await parseWarnings(projector);
+        const warnings = await projectData(projector);
         
-        plotBins(
+        plotHex(
             plot,
             warnings,
             (d) => d.WARNINGTYPE === warningType
