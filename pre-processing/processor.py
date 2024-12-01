@@ -1,5 +1,5 @@
 import pandas as pd
-import sys
+import numpy as np
 import re
 
 """
@@ -43,23 +43,34 @@ def parseWarning(raw: str):
     return "-".join(lower)
 
 
+def polyMean(raw: list[list[list]]):
+    parsed = []
+    for polySection in raw:
+        # Take the mean of its x and y coordinates
+        sums = np.add.reduce(polySection, axis=0)
+        sums /= len(polySection)
+        parsed.append(sums.tolist())
+
+    return parsed        
+        
+
 def main(year: int):
     df = pd.read_csv(rf"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\raw\warn-{year}.csv")
     
-    df["POLYGON"] = df["POLYGON"].apply(parsePolygon)
     df["WARNINGTYPE"] = df["WARNINGTYPE"].apply(parseWarning)
+    df["POLYGON"] = df["POLYGON"].apply(parsePolygon)
+    df["MEAN"] = df["POLYGON"].apply(polyMean)
 
     print(df["WARNINGTYPE"].unique())
 
     df.to_csv(
         rf"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\warn-{year}-parsed.csv",
         index=False,
-        columns=["EXPIREDATE", "ISSUEDATE", "WARNINGTYPE", "POLYGON"]
+        columns=["EXPIREDATE", "ISSUEDATE", "WARNINGTYPE", "POLYGON", "MEAN"]
     )
 
 
 if __name__ == "__main__":
-    # main()
-    for i in range(2004, 2017):
+    for i in range(2001, 2017):
         main(i)
         

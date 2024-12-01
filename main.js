@@ -1,4 +1,4 @@
-import "https://d3js.org/d3.v7.min.js";
+// import "https://d3js.org/d3.v7.min.js";
 
 // Default States
 let warningType = "tornado";
@@ -62,6 +62,40 @@ function plotWarnings(plot, data, filter) {
     });
 }
 
+function plotBins(plot, data, filter) {
+    // Clear any Previously created plot
+    plot.selectAll("g").remove();
+
+    // Setup a Hexagonal Binning Map
+    const maxRadius = 15;
+
+    const hexbin = d3.hexbin()
+        .extent([[0, 0], [WIDTH, HEIGHT]])
+        .radius(maxRadius);
+
+    const hexData = hexbin(
+        data
+        .filter(filter)
+        .flatMap(d => d.MEAN || [])
+    );
+
+    const radius = d3.scaleSqrt()
+        .domain([0, d3.max(hexData, d => d.length)]) // defines scale for points per bin
+        .range([0, maxRadius]); // defines radius based on position in scale
+
+
+    plot.append("g")
+           .attr("class", "hexagon")
+        .selectAll("path")
+        .data(hexData)
+        .enter()
+        .append("path")
+            .attr("d", d => hexbin.hexagon(radius(d.length)))
+            .attr("transform", d => "translate(" + d.x + "," + d.y + ")")
+            .attr("class", `${warningType}-hex`)
+            .attr("stroke", "black");
+}
+
 // - - Data Methods - -
 async function parseWarnings(projection) {
     const raw = await d3.csv(`data/warn-${yearSelected}-parsed.csv`);
@@ -69,6 +103,7 @@ async function parseWarnings(projection) {
     const points = raw
     .map(d => {
         const parsedPoly = JSON.parse(d.POLYGON);
+        const parsedMean = JSON.parse(d.MEAN);
 
         // For each poly part, project its coordinate
         const projectedPoly = parsedPoly.map(part =>
@@ -76,15 +111,19 @@ async function parseWarnings(projection) {
                 .filter(coords => coords != null)
         );
 
+        const projectedMean = parsedMean
+            .map(part => projection(part))
+            .filter(coords => coords != null);
+    
         return {
             ...d,
-            POLYGON: projectedPoly
+            POLYGON: projectedPoly,
+            MEAN: projectedMean
         };
     });
 
     return points;
 }
-
 
 //  - - Main Execution - -
 async function main() {
@@ -110,7 +149,7 @@ async function main() {
     const plt = async () => {
         const warnings = await parseWarnings(projector);
         
-        plotWarnings(
+        plotBins(
             plot,
             warnings,
             (d) => d.WARNINGTYPE === warningType
