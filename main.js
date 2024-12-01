@@ -1,49 +1,23 @@
 import "https://d3js.org/d3.v7.min.js";
 
+// Default States
+let warningType = "tornado";
+let yearSelected = "2001";
+
 // Chart Sizing
 const margin = { top: 40, right: 60, bottom: 40, left: 60 };
 const WIDTH = 1420 - margin.left - margin.right;
 const HEIGHT = 600 - margin.top - margin.bottom;
 
-// - - Attach Callbacks - -
-function attachCallbacks(plot) {
-    plot.selectAll(".car")
-    .on('mouseover', (event, data) => {
-        d3.select(event.target)
-            .attr('class', 'point-selected')
-            .attr("stroke", "black");
+// - - Setup Options --
+function initYears() {
+    const selector = document.getElementById("year-selector");
+    let text = "";
+    for (let i = 2001; i <= 2016; i++) {
+        text += `<option value=${i}>${i}</option>\n`;
+    }
 
-        d3.select('#tooltip')
-            .transition().duration(200)
-            .style('opacity', 1);
-        
-        const text = 
-            `Name: ${data.o.name}<br>
-            Year: ${data.o.year}<br>
-            Cylinders: ${data.o.cylinders}<br>
-            Displacement: ${data.o.displacement_cc}<br>
-            Economy (MPG): ${data.o.economy_mpg}<br>
-            Horse Power: ${data.o.power_hp}<br>
-            (0-60) Sec: ${data.o.speed_sec}<br>
-            Weight (lbs): ${data.o.weight_lb}`;
-
-        d3.select('#tooltip')
-            .html(text);
-    })
-    .on('mouseout', (event, _) => {
-        d3.select(event.target)
-            .attr('class', '')
-            .attr("stroke", "none");
-        
-        d3.select('#tooltip')
-            .transition().duration(200)
-            .style('opacity', 0);
-    })
-    .on('mousemove', (event, _) => {
-        d3.select('#tooltip')
-            .style('left', `${event.pageX + 10}px`)
-            .style('top', `${event.pageY + 10}px`);
-    });
+    selector.innerHTML = text;
 }
 
 // - - Generate the Main Map - -
@@ -69,12 +43,12 @@ function drawMap(plot, mapData) {
 }
 
 //  - - Chart Generator Functions - -
-function plotWarnings(plot, data) {
+function plotWarnings(plot, data, filter) {
     // Clear any Previously created plot
     plot.selectAll("g").remove();
 
     // Plot Locations
-    data.forEach((warn, i) => {
+    data.filter(filter).forEach((warn, i) => {
         const group = plot.append("g")
             .attr("class", `${warn.WARNINGTYPE}-group`)
             .attr("data-id", `warning-${i}`);
@@ -86,13 +60,11 @@ function plotWarnings(plot, data) {
                 .attr("stroke-width", 2);
         });
     });
-
-    // attachCallbacks(plot);
 }
 
 // - - Data Methods - -
 async function parseWarnings(projection) {
-    const raw = await d3.csv("data/warn-2001-parsed.csv");
+    const raw = await d3.csv(`data/warn-${yearSelected}-parsed.csv`);
 
     const points = raw
     .map(d => {
@@ -116,6 +88,9 @@ async function parseWarnings(projection) {
 
 //  - - Main Execution - -
 async function main() {
+    // Initialization
+    initYears();
+
     // Clear and Rebuild the Entire Plot
     const plotId = "#chart-container";
     d3.select(plotId).selectAll("*").remove();
@@ -132,21 +107,35 @@ async function main() {
     const projector = drawMap(plot, geoPathUSAStates);
 
     // Get Warning Data and Plot
-    const warnings = await parseWarnings(projector);
-    plotWarnings(
-        plot,
-        warnings.filter(d => d.WARNINGTYPE === "tornado")
-    );
-
-    // Selection Callbacks
-    document.getElementById("warning-type").onchange = () => {
-        const select = document.getElementById("warning-type");
-        console.log("date range changed", select.value);
+    const plt = async () => {
+        const warnings = await parseWarnings(projector);
+        
         plotWarnings(
             plot,
-            warnings.filter(d => d.WARNINGTYPE === select.value)
+            warnings,
+            (d) => d.WARNINGTYPE === warningType
         );
     };
+
+    plt();
+
+    // Selection Callbacks
+    document.getElementById("selector-submit").onclick = () => {
+        // Get the Warning Type and Year Selected
+        const warn = document.getElementById("warning-type").value;
+        const year = document.getElementById("year-selector").value;
+        
+        // Do not Process data if options havent changed
+        if (warningType === warn && yearSelected === year) return;
+        
+        warningType = warn;
+        yearSelected = year;
+
+        plt();
+    };
+
+    document.getElementById("warning-type").value = warningType;
+    document.getElementById("year-selector").value = yearSelected;
 }
 
 main();

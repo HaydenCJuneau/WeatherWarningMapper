@@ -11,16 +11,28 @@
 <body>
     <div id="tooltip"></div>
 
-    <h1 class="title">Severe Weather Map</h1>
+    <h1 class="title-elements">Severe Weather Warning Map</h1>
+    <h4 class="title-elements">
+        Data sourced from the 
+        <a target="_blank" href="http://catalog.data.gov/dataset/severe-weather-data-inventory-swdi2">
+            Severe Weather Data Inventory
+        </a>
+    </h4>
 
-    <div class="selector-wrapper">
-        <label for="warning-type">Select Warning Type:</label>
-        <select name="warning-type" id="warning-type">
-            <option value="tornado" selected>Tornado</option>
+    <div class="title-elements">
+        <label for="warning-type">Warning Type:</label>
+        <select id="warning-type" name="warning-type" class="option-sel">
+            <option value="tornado">Tornado</option>
             <option value="severe-thunderstorm">Severe Thunderstorm</option>
             <option value="flash-flood">Flood</option>
             <option value="special-marine">Marine</option>
         </select>
+
+        <label for="year-selector">Year:</label>
+        <select id="year-selector" name="warning-year" class="option-sel">
+        </select>
+
+        <button id="selector-submit">Submit</button>
     </div>
     
     <div class="chart-wrapper">

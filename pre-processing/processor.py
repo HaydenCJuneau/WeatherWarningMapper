@@ -1,7 +1,7 @@
 import pandas as pd
+import sys
 import re
 
-df = pd.read_csv(r"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\raw\warn-2001.csv")
 """
 Polygon should parse into this structure:
 
@@ -43,13 +43,23 @@ def parseWarning(raw: str):
     return "-".join(lower)
 
 
-df["POLYGON"] = df["POLYGON"].apply(parsePolygon)
-df["WARNINGTYPE"] = df["WARNINGTYPE"].apply(parseWarning)
+def main(year: int):
+    df = pd.read_csv(rf"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\raw\warn-{year}.csv")
+    
+    df["POLYGON"] = df["POLYGON"].apply(parsePolygon)
+    df["WARNINGTYPE"] = df["WARNINGTYPE"].apply(parseWarning)
 
-print(df["WARNINGTYPE"].unique())
+    print(df["WARNINGTYPE"].unique())
 
-df.to_csv(
-    r"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\warn-2001-parsed.csv",
-    index=False,
-    columns=["EXPIREDATE", "ISSUEDATE", "WARNINGTYPE", "POLYGON"]
-)
+    df.to_csv(
+        rf"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\warn-{year}-parsed.csv",
+        index=False,
+        columns=["EXPIREDATE", "ISSUEDATE", "WARNINGTYPE", "POLYGON"]
+    )
+
+
+if __name__ == "__main__":
+    # main()
+    for i in range(2004, 2017):
+        main(i)
+        

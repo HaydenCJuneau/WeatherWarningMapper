@@ -1,18 +1,5 @@
-.point-selected {
-    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4));
-}
-
-.axis-label {
-    font-size: small;
-}
-
-.axis-label.x {
-    text-align: center;
-}
-
-.axis-label.y {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
+.title-elements {
+    margin: 0 0 0.5rem 0;
 }
 
 .chart-wrapper {
@@ -23,6 +10,16 @@
 
 .chart-wrapper.hidden {
     display: none;
+}
+
+.selector-wrapper {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+}
+
+.selector-wrapper > .option-sel {
+    margin: 0 0.5rem 0 0.2rem;
 }
 
 #property-select {
