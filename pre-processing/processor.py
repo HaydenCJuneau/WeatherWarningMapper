@@ -51,7 +51,7 @@ def polyMean(raw: list[list[list]]):
         sums /= len(polySection)
         parsed.append(sums.tolist())
 
-    return parsed        
+    return parsed  
         
 
 def main(year: int):

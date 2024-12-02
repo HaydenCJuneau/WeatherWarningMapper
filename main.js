@@ -1,4 +1,5 @@
 // Default States
+let graphType = "boxes";
 let warningType = "tornado";
 let yearSelected = "2001";
 
@@ -57,6 +58,15 @@ function plotWarnings(plot, data, filter) {
                 .attr("stroke", "black")
                 .attr("stroke-width", 2);
         });
+
+        // warn.MEAN.forEach(point => {
+        //     group.append("circle")
+        //         .attr("cx", point[0])
+        //         .attr("cy", point[1])
+        //         .attr("r", 1)
+        //         .attr("fill", "blue")
+        //         .attr("stroke", "none");
+        // });
     });
 }
 
@@ -77,21 +87,33 @@ function plotHex(plot, data, filter) {
         .flatMap(d => d.MEAN || [])
     );
 
+    const maxLength = d3.max(hexData, d => d.length);
+
     const radius = d3.scaleSqrt()
-        .domain([0, d3.max(hexData, d => d.length)]) // defines scale for points per bin
-        .range([0, maxRadius]); // defines radius based on position in scale
+        .domain([0, maxLength]) // defines scale for points per bin
+        .range([5, maxRadius]); // defines radius based on position in scale
 
 
-    plot.append("g")
-            .attr("class", "hexagon")
+    const hexes = plot.append("g")
+        .attr("class", "hexagon")
         .selectAll("path")
         .data(hexData)
-        .enter()
-        .append("path")
-            .attr("d", d => hexbin.hexagon(radius(d.length)))
-            .attr("transform", d => "translate(" + d.x + "," + d.y + ")")
-            .attr("class", `${warningType}-hex`)
-            .attr("stroke", "black");
+        .enter();
+
+    hexes.append("path")
+        .attr("d", d => hexbin.hexagon(radius(d.length)))
+        .attr("transform", d => "translate(" + d.x + "," + d.y + ")")
+        .attr("class", `${warningType}-hex`)
+        .attr("stroke", "black");
+
+    hexes.append("text")
+        .attr("x", d => d.x)
+        .attr("y", d => d.y)
+        .attr("text-anchor", "middle")
+        .attr("dy", "0.3em")
+        .text(d => d.length)
+        .attr("font-size", "12px")
+        .attr("fill", "black");
 }
 
 // - - Data Methods - -
@@ -137,7 +159,8 @@ async function main() {
             .attr("width", WIDTH + margin.left + margin.right)
             .attr("height", HEIGHT + margin.top + margin.bottom)
         .append("g")
-            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+            .attr("transform", `translate(${margin.left}, ${margin.top})`)
+            .attr("class", "canvas");
         
     // Draw Map and Fetch Projector
     const geoPathUSAStates = await d3.json("data/usa-states.json");
@@ -147,11 +170,18 @@ async function main() {
     const plt = async () => {
         const warnings = await projectData(projector);
         
-        plotHex(
-            plot,
-            warnings,
-            (d) => d.WARNINGTYPE === warningType
-        );
+        if (graphType === "heatmap")
+            plotHex(
+                plot,
+                warnings,
+                (d) => d.WARNINGTYPE === warningType
+            );
+        else
+            plotWarnings(
+                plot,
+                warnings,
+                (d) => d.WARNINGTYPE === warningType
+            );
     };
 
     plt();
@@ -161,18 +191,24 @@ async function main() {
         // Get the Warning Type and Year Selected
         const warn = document.getElementById("warning-type").value;
         const year = document.getElementById("year-selector").value;
+        const graph = document.getElementById("graph-type").value;
         
         // Do not Process data if options havent changed
-        if (warningType === warn && yearSelected === year) return;
+        if (warningType === warn && 
+            yearSelected === year && 
+            graphType === graph) 
+            return;
         
         warningType = warn;
         yearSelected = year;
+        graphType = graph;
 
         plt();
     };
 
     document.getElementById("warning-type").value = warningType;
     document.getElementById("year-selector").value = yearSelected;
+    document.getElementById("graph-type").value = graphType;
 }
 
 main();

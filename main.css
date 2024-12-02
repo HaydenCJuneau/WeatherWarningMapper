@@ -1,3 +1,7 @@
+html {
+    background-color: lightblue;
+}
+
 .title-elements {
     margin: 0 0 0.5rem 0;
 }
@@ -42,24 +46,24 @@
 
 .tornado-group>polygon,
 .tornado-hex {
-    fill: rgba(255, 0, 0, 0.4);
+    fill: rgba(255, 0, 0, 0.5);
     stroke-width: 1;
 }
 
 .special-marine-group>polygon,
 .special-marine-hex {
-    fill: rgba(128, 0, 128, 0.4);
+    fill: rgba(128, 0, 128, 0.5);
     stroke-width: 1;
 }
 
 .severe-thunderstorm-group>polygon,
 .severe-thunderstorm-hex {
-    fill: rgba(255, 255, 0, 0.4);
+    fill: rgba(255, 255, 0, 0.5);
     stroke-width: 1;
 }
 
 .flash-flood-group>polygon,
 .flash-flood-hex {
-    fill: rgba(0, 128, 0, 0.4);
+    fill: rgba(0, 128, 0, 0.5);
     stroke-width: 1;
 }
