@@ -63,7 +63,7 @@ def main():
     total = 0
     
     for year in range(2001, 2017):
-        df = pd.read_csv(rf"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\raw\warn-{year}.csv")
+        df = pd.read_csv(rf"..\data\raw\warn-{year}.csv")
         
         df["WARNINGTYPE"] = df["WARNINGTYPE"].apply(parseWarning)
         df["POLYGON"] = df["POLYGON"].apply(parsePolygon)
@@ -83,7 +83,7 @@ def main():
         mtotal += len(mdf.index)
 
         mdf.to_csv(
-            rf"C:\Users\hayde\Documents\UNCC-Work-Local\ITCS-6121\VisFInalProject\data\monthly\warn-month-{i + 1}.csv",
+            rf"..\data\monthly\warn-month-{i + 1}.csv",
             index=False,
             columns=["EXPIREDATE", "ISSUEDATE", "WARNINGTYPE", "POLYGON", "MEAN"]
         )
