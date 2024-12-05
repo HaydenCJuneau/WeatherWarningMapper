@@ -3,3 +3,4 @@ package.json
 package-lock.json
 venv
 /data/raw
+/data/yearly
