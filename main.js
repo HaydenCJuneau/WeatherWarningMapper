@@ -13,14 +13,16 @@ const warningMaxes = {
     "severe-thunderstorm": 340,
     "tornado": 120,
     "flash-flood": 120,
-    "special-marine": 280
+    "special-marine": 280,
+    "combined": 400
 };
 
 const warningColors = {
     "severe-thunderstorm": d3.interpolateOranges,
     "tornado": d3.interpolateReds,
     "flash-flood": d3.interpolateGreens,
-    "special-marine": d3.interpolatePurples
+    "special-marine": d3.interpolatePurples,
+    "combined": d3.interpolateTurbo
 };
 
 // - - Generate the Main Map - -
@@ -168,13 +170,15 @@ async function main() {
             plotHex(
                 plot,
                 warnings,
-                (d) => d.WARNINGTYPE === warningType
+                (d) => warningType === "combined" ||
+                    d.WARNINGTYPE === warningType
             );
         else
             plotWarnings(
                 plot,
                 warnings,
-                (d) => d.WARNINGTYPE === warningType
+                (d) => warningType === "combined" ||
+                    d.WARNINGTYPE === warningType
             );
     };
 
