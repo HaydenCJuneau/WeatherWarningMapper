@@ -1,7 +1,7 @@
 // Default States
-let graphType = "boxes";
-let warningType = "tornado";
-let yearSelected = "2001";
+let graphType = "heatmap";
+let warningType = "severe-thunderstorm";
+let monthSelected = "5";
 
 // Chart Sizing (1420x600) is a good alterniative to window size
 const margin = { top: 40, right: 60, bottom: 40, left: 60 };
@@ -9,10 +9,10 @@ const WIDTH = (window.innerWidth * .9) - margin.left - margin.right;
 const HEIGHT = (window.innerHeight * .8) - margin.top - margin.bottom;
 
 // - - Setup Options --
-function initYears() {
-    const selector = document.getElementById("year-selector");
+function initMonths() {
+    const selector = document.getElementById("month-selector");
     let text = "";
-    for (let i = 2001; i <= 2016; i++) {
+    for (let i = 1; i <= 12; i++) {
         text += `<option value=${i}>${i}</option>\n`;
     }
 
@@ -58,15 +58,6 @@ function plotWarnings(plot, data, filter) {
                 .attr("stroke", "black")
                 .attr("stroke-width", 2);
         });
-
-        // warn.MEAN.forEach(point => {
-        //     group.append("circle")
-        //         .attr("cx", point[0])
-        //         .attr("cy", point[1])
-        //         .attr("r", 1)
-        //         .attr("fill", "blue")
-        //         .attr("stroke", "none");
-        // });
     });
 }
 
@@ -93,6 +84,9 @@ function plotHex(plot, data, filter) {
         .domain([0, maxLength]) // defines scale for points per bin
         .range([5, maxRadius]); // defines radius based on position in scale
 
+    const colorScale = 
+        d3.scaleSequential(d3.interpolateOranges)
+        .domain([0, maxLength]);
 
     const hexes = plot.append("g")
         .attr("class", "hexagon")
@@ -101,9 +95,11 @@ function plotHex(plot, data, filter) {
         .enter();
 
     hexes.append("path")
-        .attr("d", d => hexbin.hexagon(radius(d.length)))
+        // .attr("d", d => hexbin.hexagon(radius(d.length)))
+        .attr("d", d => hexbin.hexagon(maxRadius))
         .attr("transform", d => "translate(" + d.x + "," + d.y + ")")
         .attr("class", `${warningType}-hex`)
+        .attr("fill", d => colorScale(d.length))
         .attr("stroke", "black");
 
     hexes.append("text")
@@ -118,7 +114,7 @@ function plotHex(plot, data, filter) {
 
 // - - Data Methods - -
 async function projectData(projection) {
-    const raw = await d3.csv(`data/warn-${yearSelected}-parsed.csv`);
+    const raw = await d3.csv(`data/monthly/warn-month-${monthSelected}.csv`);
 
     const points = raw
     .map(d => {
@@ -148,7 +144,7 @@ async function projectData(projection) {
 //  - - Main Execution - -
 async function main() {
     // Initialization
-    initYears();
+    initMonths();
 
     // Clear and Rebuild the Entire Plot
     const plotId = "#chart-container";
@@ -190,24 +186,24 @@ async function main() {
     document.getElementById("selector-submit").onclick = () => {
         // Get the Warning Type and Year Selected
         const warn = document.getElementById("warning-type").value;
-        const year = document.getElementById("year-selector").value;
+        const month = document.getElementById("month-selector").value;
         const graph = document.getElementById("graph-type").value;
         
         // Do not Process data if options havent changed
         if (warningType === warn && 
-            yearSelected === year && 
+            monthSelected === month && 
             graphType === graph) 
             return;
         
         warningType = warn;
-        yearSelected = year;
+        monthSelected = month;
         graphType = graph;
 
         plt();
     };
 
     document.getElementById("warning-type").value = warningType;
-    document.getElementById("year-selector").value = yearSelected;
+    document.getElementById("month-selector").value = monthSelected;
     document.getElementById("graph-type").value = graphType;
 }
 

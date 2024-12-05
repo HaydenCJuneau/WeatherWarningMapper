@@ -44,7 +44,7 @@ html {
     'flash-flood' 'severe-thunderstorm' 'special-marine' 'tornado'
 */
 
-.tornado-group>polygon,
+/* .tornado-group>polygon,
 .tornado-hex {
     fill: rgba(255, 0, 0, 0.5);
     stroke-width: 1;
@@ -66,4 +66,4 @@ html {
 .flash-flood-hex {
     fill: rgba(0, 128, 0, 0.5);
     stroke-width: 1;
-}
+} */
