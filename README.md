@@ -1,5 +1,7 @@
 # Hayden Juneau's Severe Weather Mapper
-Created for ITCS 6121 - Data and Information Visualization
+Created for ITCS 6121 - Data and Information Visualization <br>
+
+Try it out on the [Github Pages Site](https://haydencjuneau.github.io/WeatherWarningMapper/)!
 
 ## Abstract
 This application is a small data visualization tool utilizing aggregated severe weather warning data. Use it to view actual issues warnings for each month, summed up from 2001 - 2016. View four types of weather risks: Tornado, Severe Thunderstorm, Flood and Marine. The "Boxes" view shows polygons encompassing the affected areas. The "Heatmap" view generates a hexagonal map of warnings for each type. More intense colors signify a more heavily affected area. Gain insights about areas with more intense weather, and how those areas shift over the course of a year.
