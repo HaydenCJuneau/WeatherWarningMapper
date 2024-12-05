@@ -44,26 +44,22 @@ html {
     'flash-flood' 'severe-thunderstorm' 'special-marine' 'tornado'
 */
 
-/* .tornado-group>polygon,
-.tornado-hex {
+.tornado-group>polygon {
     fill: rgba(255, 0, 0, 0.5);
     stroke-width: 1;
 }
 
-.special-marine-group>polygon,
-.special-marine-hex {
+.special-marine-group>polygon {
     fill: rgba(128, 0, 128, 0.5);
     stroke-width: 1;
 }
 
-.severe-thunderstorm-group>polygon,
-.severe-thunderstorm-hex {
+.severe-thunderstorm-group>polygon {
     fill: rgba(255, 255, 0, 0.5);
     stroke-width: 1;
 }
 
-.flash-flood-group>polygon,
-.flash-flood-hex {
+.flash-flood-group>polygon {
     fill: rgba(0, 128, 0, 0.5);
     stroke-width: 1;
-} */
+}

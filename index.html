@@ -20,7 +20,7 @@
     </h4>
 
     <div class="title-elements">
-        <label for="graph-type">Warning Type:</label>
+        <label for="graph-type">Graph Type:</label>
         <select id="graph-type" name="graph-type" class="option-sel">
             <option value="boxes">Boxes</option>
             <option value="heatmap">Heatmap</option>
@@ -33,12 +33,25 @@
             <option value="flash-flood">Flood</option>
             <option value="special-marine">Marine</option>
         </select>
-
+        
         <label for="month-selector">Month:</label>
         <select id="month-selector" name="warning-month" class="option-sel">
+            <option value="1">Janurary</option>
+            <option value="2">Feburary</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
         </select>
-
-        <button id="selector-submit">Submit</button>
+        
+        <button id="selector-prev">Prev</button>
+        <button id="selector-next">Next</button>
     </div>
     
     <div class="chart-wrapper">
